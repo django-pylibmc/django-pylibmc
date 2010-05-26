@@ -10,16 +10,20 @@ PYLIBMC_BEHAVIORS.
 Unlike the default Django caching backends, this backend lets you pass 0 as a
 timeout, which translates to an infinite timeout in memcached.
 """
+import logging
 import time
 
 from django.conf import settings
 from django.core.cache.backends.base import BaseCache, InvalidCacheBackendError
-from django.utils.encoding import smart_unicode, smart_str
+from django.utils.encoding import smart_str
 
 try:
     import pylibmc
 except ImportError:
     raise InvalidCacheBackendError('Could not import pylibmc.')
+
+
+log = logging.getLogger('django.pylibmc')
 
 
 # It would be nice to inherit from Django's memcached backend, but that
@@ -54,7 +58,13 @@ class CacheClass(BaseCache):
     def add(self, key, value, timeout=None):
         if isinstance(value, unicode):
             value = value.encode('utf-8')
-        return self._cache.add(smart_str(key), value, self._get_memcache_timeout(timeout))
+        try:
+            return self._cache.add(smart_str(key), value,
+                                   self._get_memcache_timeout(timeout))
+        except pylibmc.ServerError:
+            log.error('ServerError saving %s => [%s]' % (key, value),
+                      exc_info=True)
+            return False
 
     def get(self, key, default=None):
         val = self._cache.get(smart_str(key))
@@ -63,13 +73,14 @@ class CacheClass(BaseCache):
         return val
 
     def set(self, key, value, timeout=None):
-        self._cache.set(smart_str(key), value, self._get_memcache_timeout(timeout))
+        self._cache.set(smart_str(key), value,
+                        self._get_memcache_timeout(timeout))
 
     def delete(self, key):
         self._cache.delete(smart_str(key))
 
     def get_many(self, keys):
-        return self._cache.get_multi(map(smart_str,keys))
+        return self._cache.get_multi(map(smart_str, keys))
 
     def close(self, **kwargs):
         self._cache.disconnect_all()
