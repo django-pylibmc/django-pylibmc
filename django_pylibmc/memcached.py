@@ -1,21 +1,21 @@
 """
 Memcached cache backend for Django using pylibmc.
 
-If you want to use the binary protocol, specify &binary=1 in your
-CACHE_BACKEND.  The default is 0, using the text protocol.
+If you want to use the binary protocol, specify `'BINARY': True` in your CACHES
+settings.  The default is `False`, using the text protocol.
 
-pylibmc behaviors can be declared as a dict in settings.py under the name
-PYLIBMC_BEHAVIORS.
+pylibmc behaviors can be declared as a dict in `CACHES` backend `OPTIONS`
+setting.
 
 Unlike the default Django caching backends, this backend lets you pass 0 as a
 timeout, which translates to an infinite timeout in memcached.
 """
 import logging
-import time
+from threading import local
 
 from django.conf import settings
-from django.core.cache.backends.base import BaseCache, InvalidCacheBackendError
-from django.utils.encoding import smart_str
+from django.core.cache.backends.base import InvalidCacheBackendError
+from django.core.cache.backends.memcached import BaseMemcachedCache
 
 try:
     import pylibmc
@@ -23,90 +23,53 @@ except ImportError:
     raise InvalidCacheBackendError('Could not import pylibmc.')
 
 
+MIN_COMPRESS = getattr(settings,
+                       'PYLIBMC_MIN_COMPRESS_LEN', 150 * 1024)  # 150k
 log = logging.getLogger('django.pylibmc')
 
 
-# It would be nice to inherit from Django's memcached backend, but that
-# requires import python-memcache or cmemcache.  Those probably aren't
-# available since we're using pylibmc, hence the copy/paste.
-
-
-class CacheClass(BaseCache):
+class PyLibMCCache(BaseMemcachedCache):
 
     def __init__(self, server, params):
-        BaseCache.__init__(self, params)
-        binary = int(params.get('binary', False))
-        self._cache = pylibmc.Client(server.split(';'), binary=binary)
-        self._cache.behaviors = getattr(settings, 'PYLIBMC_BEHAVIORS', {})
+        self._local = local()
+        self.binary = int(params.get('BINARY', False))
+        super(PyLibMCCache, self).__init__(server, params, library=pylibmc,
+                                           value_not_found_exception=pylibmc.NotFound)
 
-    def _get_memcache_timeout(self, timeout):
-        """
-        Memcached deals with long (> 30 days) timeouts in a special
-        way. Call this function to obtain a safe value for your timeout.
-        """
-        timeout = self.default_timeout if timeout is None else timeout
-        if timeout > 2592000: # 60*60*24*30, 30 days
-            # See http://code.google.com/p/memcached/wiki/FAQ
-            # "You can set expire times up to 30 days in the future. After that
-            # memcached interprets it as a date, and will expire the item after
-            # said date. This is a simple (but obscure) mechanic."
-            #
-            # This means that we have to switch to absolute timestamps.
-            timeout += int(time.time())
-        return timeout
+    @property
+    def _cache(self):
+        # PylibMC uses cache options as the 'behaviors' attribute.
+        # It also needs to use threadlocals, because some versions of
+        # PylibMC don't play well with the GIL.
+        client = getattr(self._local, 'client', None)
+        if client:
+            return client
 
-    def add(self, key, value, timeout=None):
-        if isinstance(value, unicode):
-            value = value.encode('utf-8')
+        client = self._lib.Client(self._servers, binary=self.binary)
+        if self._options:
+            client.behaviors = self._options
+
+        self._local.client = client
+
+        return client
+
+    def add(self, key, value, timeout=None, version=None):
+        key = self.make_key(key, version=version)
         try:
-            return self._cache.add(smart_str(key), value,
-                                   self._get_memcache_timeout(timeout))
+            return self._cache.add(key, value,
+                                   self._get_memcache_timeout(timeout),
+                                   MIN_COMPRESS)
         except pylibmc.ServerError:
-            log.error('ServerError saving %s => [%s]' % (key, value),
+            log.error('ServerError saving %s (%d bytes)' % (key, len(value)),
                       exc_info=True)
             return False
 
-    def get(self, key, default=None):
-        val = self._cache.get(smart_str(key))
-        if val is None:
-            return default
-        return val
-
-    def set(self, key, value, timeout=None):
-        self._cache.set(smart_str(key), value,
-                        self._get_memcache_timeout(timeout))
-
-    def delete(self, key):
-        self._cache.delete(smart_str(key))
-
-    def get_many(self, keys):
-        return self._cache.get_multi(map(smart_str, keys))
-
-    def close(self, **kwargs):
-        self._cache.disconnect_all()
-
-    def incr(self, key, delta=1):
+    def set(self, key, value, timeout=None, version=None):
+        key = self.make_key(key, version=version)
         try:
-            return self._cache.incr(key, delta)
-        except pylibmc.NotFound:
-            raise ValueError("Key '%s' not found" % key)
-
-    def decr(self, key, delta=1):
-        try:
-            return self._cache.decr(key, delta)
-        except pylibmc.NotFound:
-            raise ValueError("Key '%s' not found" % key)
-
-    def set_many(self, data, timeout=None):
-        safe_data = {}
-        for key, value in data.items():
-            if isinstance(value, unicode):
-                value = value.encode('utf-8')
-            safe_data[smart_str(key)] = value
-        self._cache.set_multi(safe_data, self._get_memcache_timeout(timeout))
-
-    def delete_many(self, keys):
-        self._cache.delete_multi(map(smart_str, keys))
-
-    def clear(self):
-        self._cache.flush_all()
+            self._cache.set(key, value, self._get_memcache_timeout(timeout),
+                            MIN_COMPRESS)
+        except pylibmc.ServerError:
+            log.error('ServerError saving %s (%d bytes)' % (key, len(value)),
+                      exc_info=True)
+            return False
