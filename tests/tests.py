@@ -3,7 +3,6 @@ import os
 import sys
 import time
 import unittest
-from datetime import datetime
 
 
 test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -170,7 +169,7 @@ class BaseCacheTests(object):
             u'ascii': u'ascii_value',
             u'unicode_ascii': u'Iñtërnâtiônàlizætiøn1',
             u'Iñtërnâtiônàlizætiøn': u'Iñtërnâtiônàlizætiøn2',
-            u'ascii': {u'x' : 1 }
+            u'ascii': {u'x': 1}
             }
         for (key, value) in stuff.items():
             self.cache.set(key, value)
@@ -233,12 +232,34 @@ class BaseCacheTests(object):
         self.assertEqual(self.cache.get('key3'), 'sausage')
         self.assertEqual(self.cache.get('key4'), 'lobster bisque')
 
+    def test_gt_1MB_value(self):
+        # Test value > 1M gets compressed and stored
+        big_value = 'x' * 2 * 1024 * 1024
+        self.cache.set('big_value', big_value)
+        self.assertEqual(self.cache.get('big_value'), big_value)
+
+    def test_too_big_value(self):
+        # A value larger than 1M after compression will fail and return False
+        super_big_value = 'x' * 1024 * 1024 * 400
+        self.assertFalse(self.cache.set('super_big_value', super_big_value))
 
 
 class PylibmcCacheTests(unittest.TestCase, BaseCacheTests):
 
     def setUp(self):
-        self.cache = get_cache('django_pylibmc.memcached://')
+        self.cache = get_cache('django_pylibmc.memcached.PyLibMCCache')
+
+class PylibmcCacheWithBinaryTests(unittest.TestCase, BaseCacheTests):
+
+    def setUp(self):
+        self.cache = get_cache('django_pylibmc.memcached.PyLibMCCache',
+                               BINARY=True)
+
+class PylibmcCacheWithOptionsTests(unittest.TestCase, BaseCacheTests):
+
+    def setUp(self):
+        self.cache = get_cache('django_pylibmc.memcached.PyLibMCCache',
+                               OPTIONS={'tcp_nodelay': True, 'ketama': True})
 
 
 if __name__ == '__main__':

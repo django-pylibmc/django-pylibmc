@@ -10,7 +10,7 @@ it's fast.
 Requirements
 ------------
 
-django-pylibmc requires Django 1.2.  It was written and tested on Python 2.6.
+django-pylibmc requires Django 1.3.  It was written and tested on Python 2.7.
 
 
 Installation
@@ -31,20 +31,31 @@ Usage
 
 Your cache backend should look something like this::
 
-    CACHE_BACKEND = 'django_pylibmc.memcached://localhost:11211?timeout=500'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+            'LOCATION': 'localhost:11211',
+            'TIMEOUT': 500,
+            'BINARY': True,
+            'OPTIONS': {  # Maps to pylibmc "behaviors"
+                'tcp_nodelay': True,
+                'ketama': True
+            }
+        }
+    }
 
-If you want to use the memcached binary protocol, pass ``binary=1`` in your
-``CACHE_BACKEND``::
 
-    CACHE_BACKEND = 'django_pylibmc.memcached://localhost:11211?timeout=500&binary=1'
+If you want to use the memcached binary protocol, set the `BINARY` key's
+value to `True` as shown above.  `BINARY` is `False` by default.
 
 If you want to control `pylibmc behaviors
-<http://sendapatch.se/projects/pylibmc/behaviors.html>`_, use the setting
-called ``PYLIBMC_BEHAVIORS``::
+<http://sendapatch.se/projects/pylibmc/behaviors.html>`_, use the
+`OPTIONS`.  `OPTIONS` is an empty dict by default.
 
-    PYLIBMC_BEHAVIORS = {'tcp_nodelay': True, 'ketama': True}
-
-``PYLIBMC_BEHAVIORS`` is an empty dict by default.
+Pylibmc supports `compression
+<http://sendapatch.se/projects/pylibmc/misc.html#compression>`_ and the
+minimum size (in bytes) of values to compress can be set via the Django
+setting `PYLIBMC_MIN_COMPRESS_LEN`.  The default is `150 * 1024` (150k).
 
 
 Caveats
