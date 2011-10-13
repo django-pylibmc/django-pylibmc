@@ -55,7 +55,7 @@ If you want to control `pylibmc behaviors
 Pylibmc supports `compression
 <http://sendapatch.se/projects/pylibmc/misc.html#compression>`_ and the
 minimum size (in bytes) of values to compress can be set via the Django
-setting `PYLIBMC_MIN_COMPRESS_LEN`.  The default is `150 * 1024` (150k).
+setting `PYLIBMC_MIN_COMPRESS_LEN`.  The default is 0, which is disabled.
 
 
 Caveats

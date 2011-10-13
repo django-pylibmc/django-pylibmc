@@ -12,6 +12,7 @@ timeout, which translates to an infinite timeout in memcached.
 """
 import logging
 from threading import local
+import warnings
 
 from django.conf import settings
 from django.core.cache.backends.base import InvalidCacheBackendError
@@ -23,9 +24,14 @@ except ImportError:
     raise InvalidCacheBackendError('Could not import pylibmc.')
 
 
-MIN_COMPRESS = getattr(settings,
-                       'PYLIBMC_MIN_COMPRESS_LEN', 150 * 1024)  # 150k
 log = logging.getLogger('django.pylibmc')
+
+
+MIN_COMPRESS = getattr(settings, 'PYLIBMC_MIN_COMPRESS_LEN', 0)  # Disabled
+if MIN_COMPRESS > 0 and not pylibmc.support_compression:
+    MIN_COMPRESS = 0
+    warnings.warn('A minimum compression length was provided but pylibmc was '
+                  'not compiled with support for it.')
 
 
 class PyLibMCCache(BaseMemcachedCache):
