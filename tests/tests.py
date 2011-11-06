@@ -240,7 +240,7 @@ class BaseCacheTests(object):
 
     def test_too_big_value(self):
         # A value larger than 1M after compression will fail and return False
-        super_big_value = 'x' * 1024 * 1024 * 400
+        super_big_value = 'x' * 400 * 1024 * 1024
         self.assertFalse(self.cache.set('super_big_value', super_big_value))
 
 
