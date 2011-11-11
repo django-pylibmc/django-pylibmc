@@ -74,12 +74,12 @@ class PyLibMCCache(BaseMemcachedCache):
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
 
-    def get(self, *args, **kwargs):
+    def get(self, key, default=None, version=None):
         try:
-            return super(PyLibMCCache, self).get(*args, **kwargs)
+            return super(PyLibMCCache, self).get(key, default, version)
         except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
-            return False
+            return default
 
     def set(self, key, value, timeout=None, version=None):
         key = self.make_key(key, version=version)
@@ -107,7 +107,7 @@ class PyLibMCCache(BaseMemcachedCache):
             return super(PyLibMCCache, self).get_many(*args, **kwargs)
         except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
-            return False
+            return {}
 
     def set_many(self, *args, **kwargs):
         try:
