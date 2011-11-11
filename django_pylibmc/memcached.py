@@ -20,6 +20,7 @@ from django.core.cache.backends.memcached import BaseMemcachedCache
 
 try:
     import pylibmc
+    MemcachedError = pylibmc._pylibmc.MemcachedError
 except ImportError:
     raise InvalidCacheBackendError('Could not import pylibmc.')
 
@@ -69,14 +70,14 @@ class PyLibMCCache(BaseMemcachedCache):
             log.error('ServerError saving %s (%d bytes)' % (key, len(value)),
                       exc_info=True)
             return False
-        except pylibmc._pylibmc.MemcachedError, e:
+        except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
 
     def get(self, *args, **kwargs):
         try:
             return super(PyLibMCCache, self).get(*args, **kwargs)
-        except pylibmc._pylibmc.MemcachedError, e:
+        except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
 
@@ -90,34 +91,34 @@ class PyLibMCCache(BaseMemcachedCache):
             log.error('ServerError saving %s (%d bytes)' % (key, len(value)),
                       exc_info=True)
             return False
-        except pylibmc._pylibmc.MemcachedError, e:
+        except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
 
     def delete(self, *args, **kwargs):
         try:
             return super(PyLibMCCache, self).delete(*args, **kwargs)
-        except pylibmc._pylibmc.MemcachedError, e:
+        except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
 
     def get_many(self, *args, **kwargs):
         try:
             return super(PyLibMCCache, self).get_many(*args, **kwargs)
-        except pylibmc._pylibmc.MemcachedError, e:
+        except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
 
     def set_many(self, *args, **kwargs):
         try:
             return super(PyLibMCCache, self).set_many(*args, **kwargs)
-        except pylibmc._pylibmc.MemcachedError, e:
+        except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
 
     def delete_many(self, *args, **kwargs):
         try:
             return super(PyLibMCCache, self).delete_many(*args, **kwargs)
-        except pylibmc._pylibmc.MemcachedError, e:
+        except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
