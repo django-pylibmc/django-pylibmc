@@ -37,10 +37,14 @@ if MIN_COMPRESS > 0 and not pylibmc.support_compression:
 
 class PyLibMCCache(BaseMemcachedCache):
 
-    def __init__(self, server, params):
+    def __init__(self, server, params, username=None, password=None):
+        import os
         self._local = local()
         self.binary = int(params.get('BINARY', False))
-        super(PyLibMCCache, self).__init__(server, params, library=pylibmc,
+        self._username = os.environ.get('MEMCACHE_USERNAME', username)
+        self._password = os.environ.get('MEMCACHE_PASSWORD', password)
+        self._server = os.environ.get('MEMCACHE_SERVERS', server)
+        super(PyLibMCCache, self).__init__(self._server, params, library=pylibmc,
                                            value_not_found_exception=pylibmc.NotFound)
 
     @property
@@ -51,8 +55,14 @@ class PyLibMCCache(BaseMemcachedCache):
         client = getattr(self._local, 'client', None)
         if client:
             return client
-
-        client = self._lib.Client(self._servers, binary=self.binary)
+        
+        if (self._username != None and self._password != None):
+            client = self._lib.Client(self._servers, 
+            binary=self.binary, 
+            username=self._username, 
+            password=self._password)    
+        else:
+            client = self._lib.Client(self._servers, binary=self.binary)
         if self._options:
             client.behaviors = self._options
 
