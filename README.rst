@@ -10,7 +10,7 @@ it's fast.
 Requirements
 ------------
 
-django-pylibmc requires Django 1.3.  It was written and tested on Python 2.7.
+django-pylibmc requires Django 1.3+.  It was written and tested on Python 2.7.
 
 
 Installation
@@ -65,3 +65,11 @@ This package breaks away from the current handling of ``timeout=0`` in Django.
 Django converts 0 into the default timeout, while django-pylibmc leaves it as
 0.  memcached takes 0 to mean "infinite timeout."  You can still pass ``None``
 to get the default timeout.
+
+
+Testing
+-------
+
+Run the tests like this::
+
+    python tests/test.py
