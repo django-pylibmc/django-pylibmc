@@ -11,8 +11,8 @@ Unlike the default Django caching backends, this backend lets you pass 0 as a
 timeout, which translates to an infinite timeout in memcached.
 """
 import logging
-from threading import local
 import warnings
+from threading import local
 
 from django.conf import settings
 from django.core.cache.backends.base import InvalidCacheBackendError
@@ -55,20 +55,29 @@ class PyLibMCCache(BaseMemcachedCache):
         client = getattr(self._local, 'client', None)
         if client:
             return client
-        
-        if (self._username != None and self._password != None):
-            client = self._lib.Client(self._servers, 
-            binary=self.binary, 
-            username=self._username, 
-            password=self._password)    
-        else:
-            client = self._lib.Client(self._servers, binary=self.binary)
+
+        client_kwargs = {'binary': self.binary}
+        if self._username is not None and self._password is not None:
+            client_kwargs.update({
+                'username': self._username,
+                'password': self._password
+            })
+        client = self._lib.Client(self._servers, **client_kwargs)
         if self._options:
             client.behaviors = self._options
 
         self._local.client = client
 
         return client
+
+    def _get_memcache_timeout(self, timeout):
+        """
+        Special case timeout=0 to allow for infinite timeouts.
+        """
+        if timeout == 0:
+            return timeout
+        else:
+            return super(PyLibMCCache, self)._get_memcache_timeout(timeout)
 
     def add(self, key, value, timeout=None, version=None):
         key = self.make_key(key, version=version)
