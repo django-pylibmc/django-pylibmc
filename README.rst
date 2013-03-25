@@ -61,8 +61,8 @@ setting `PYLIBMC_MIN_COMPRESS_LEN`.  The default is 0, which is disabled.
 Configuration with Environment Variables
 ----------------------------------------
 
-Optionally, the memcached connection can be configured with environment 
-variables (on platforms like Heroku). To do so, declare the following 
+Optionally, the memcached connection can be configured with environment
+variables (on platforms like Heroku). To do so, declare the following
 variables:
 
 * `MEMCACHE_SERVERS`
