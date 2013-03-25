@@ -24,3 +24,5 @@ CACHES = {
 }
 
 PYLIBMC_MIN_COMPRESS_LEN = 150 * 1024
+
+SECRET_KEY = 'secret'
