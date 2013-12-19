@@ -20,7 +20,7 @@ from django.core.cache.backends.memcached import BaseMemcachedCache
 
 try:
     import pylibmc
-    MemcachedError = pylibmc._pylibmc.MemcachedError
+    from pylibmc import Error as MemcachedError
 except ImportError:
     raise InvalidCacheBackendError('Could not import pylibmc.')
 
