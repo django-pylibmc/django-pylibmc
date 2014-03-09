@@ -34,7 +34,7 @@ Your cache backend should look something like this::
     CACHES = {
         'default': {
             'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-            'LOCATION': 'localhost:11211',
+            'LOCATION': 'localhost:11211', # or '/path/to/memcached.sock' for socket connection
             'TIMEOUT': 500,
             'BINARY': True,
             'OPTIONS': {  # Maps to pylibmc "behaviors"
@@ -47,6 +47,7 @@ Your cache backend should look something like this::
 
 If you want to use the memcached binary protocol, set the `BINARY` key's
 value to `True` as shown above.  `BINARY` is `False` by default.
+
 
 If you want to control `pylibmc behaviors
 <http://sendapatch.se/projects/pylibmc/behaviors.html>`_, use the
