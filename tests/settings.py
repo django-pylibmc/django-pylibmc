@@ -16,6 +16,8 @@ CACHES = {
         'LOCATION': 'localhost:11211',
         'TIMEOUT': 500,
         'BINARY': True,
+        'USERNAME': 'test_username',
+        'PASSWORD': 'test_password',
         'OPTIONS': {
             'tcp_nodelay': True,
             'ketama': True
