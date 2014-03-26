@@ -41,8 +41,8 @@ class PyLibMCCache(BaseMemcachedCache):
         import os
         self._local = local()
         self.binary = int(params.get('BINARY', False))
-        self._username = os.environ.get('MEMCACHE_USERNAME', username)
-        self._password = os.environ.get('MEMCACHE_PASSWORD', password)
+        self._username = os.environ.get('MEMCACHE_USERNAME', username or params.get('USERNAME'))
+        self._password = os.environ.get('MEMCACHE_PASSWORD', password or params.get('PASSWORD'))
         self._server = os.environ.get('MEMCACHE_SERVERS', server)
         super(PyLibMCCache, self).__init__(self._server, params, library=pylibmc,
                                            value_not_found_exception=pylibmc.NotFound)
