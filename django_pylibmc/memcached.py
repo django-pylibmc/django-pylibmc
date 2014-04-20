@@ -28,11 +28,32 @@ except ImportError:
 log = logging.getLogger('django.pylibmc')
 
 
-MIN_COMPRESS = getattr(settings, 'PYLIBMC_MIN_COMPRESS_LEN', 0)  # Disabled
-if MIN_COMPRESS > 0 and not pylibmc.support_compression:
-    MIN_COMPRESS = 0
+MIN_COMPRESS_LEN = getattr(settings, 'PYLIBMC_MIN_COMPRESS_LEN', 0)  # Disabled
+if MIN_COMPRESS_LEN > 0 and not pylibmc.support_compression:
+    MIN_COMPRESS_LEN = 0
     warnings.warn('A minimum compression length was provided but pylibmc was '
                   'not compiled with support for it.')
+
+
+COMPRESS_LEVEL = getattr(settings, 'PYLIBMC_COMPRESS_LEVEL', -1)  # zlib.Z_DEFAULT_COMPRESSION
+if not COMPRESS_LEVEL == -1:
+    if not pylibmc.support_compression:
+        warnings.warn('A compression level was provided but pylibmc was '
+                      'not compiled with support for it.')
+    if not pylibmc.__version__ >= '1.3.0':
+        warnings.warn('A compression level was provided but pylibmc 1.3.0 '
+                      'or above is required to handle this option.')
+
+
+# Keyword arguments to configure compression options
+# based on capabilities of a provided pylibmc library.
+COMPRESS_KWARGS = {
+    # Requires pylibmc 1.0 and above. Given that the minumum supported
+    # version (as of now) is 1.1, the parameter is always included.
+    'min_compress_len': MIN_COMPRESS_LEN,
+}
+if pylibmc.__version__ >= '1.3.0':
+    COMPRESS_KWARGS['compress_level'] = COMPRESS_LEVEL
 
 
 class PyLibMCCache(BaseMemcachedCache):
@@ -84,7 +105,7 @@ class PyLibMCCache(BaseMemcachedCache):
         try:
             return self._cache.add(key, value,
                                    self._get_memcache_timeout(timeout),
-                                   MIN_COMPRESS)
+                                   **COMPRESS_KWARGS)
         except pylibmc.ServerError:
             log.error('ServerError saving %s (%d bytes)' % (key, len(value)),
                       exc_info=True)
@@ -105,7 +126,7 @@ class PyLibMCCache(BaseMemcachedCache):
         try:
             return self._cache.set(key, value,
                                    self._get_memcache_timeout(timeout),
-                                   MIN_COMPRESS)
+                                   **COMPRESS_KWARGS)
         except pylibmc.ServerError:
             log.error('ServerError saving %s (%d bytes)' % (key, len(value)),
                       exc_info=True)
