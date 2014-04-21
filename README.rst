@@ -57,6 +57,12 @@ Pylibmc supports `compression
 minimum size (in bytes) of values to compress can be set via the Django
 setting `PYLIBMC_MIN_COMPRESS_LEN`.  The default is 0, which is disabled.
 
+Pylibmc 1.3.0 and above allows to configure compression level, which can
+be set via the Django setting `PYLIBMC_COMPRESS_LEVEL`. It accepts the
+same values as the Python `zlib <https://docs.python.org/2/library/zlib.html>`_
+module. Please note that pylibmc changed the default from `1` (`Z_BEST_SPEED`)
+to `-1` (`Z_DEFAULT_COMPRESSION`) in 1.3.0.
+
 
 Configuration with Environment Variables
 ----------------------------------------
