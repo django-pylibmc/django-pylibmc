@@ -82,6 +82,10 @@ to get the default timeout.
 Testing
 -------
 
+Install `tox <http://tox.testrun.org/>`_::
+
+    pip install tox
+
 Run the tests like this::
 
-    python tests/test.py
+    tox
