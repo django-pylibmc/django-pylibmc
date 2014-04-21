@@ -1,6 +1,21 @@
+import sys
+
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
 
 import django_pylibmc
+
+
+class Tox(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+    def run_tests(self):
+        # import here, cause outside the eggs aren't loaded
+        import tox
+        errno = tox.cmdline(self.test_args)
+        sys.exit(errno)
 
 
 setup(
@@ -16,6 +31,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=['pylibmc', 'Django>=1.2'],
+    tests_require=['tox'],
+    cmdclass = {'test': Tox},
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
