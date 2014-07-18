@@ -15,7 +15,7 @@ import warnings
 from threading import local
 
 from django.conf import settings
-from django.core.cache.backends.base import InvalidCacheBackendError
+from django.core.cache.backends.base import InvalidCacheBackendError, DEFAULT_TIMEOUT
 from django.core.cache.backends.memcached import BaseMemcachedCache
 
 try:
@@ -97,10 +97,11 @@ class PyLibMCCache(BaseMemcachedCache):
         """
         if timeout == 0:
             return timeout
-        else:
-            return super(PyLibMCCache, self)._get_memcache_timeout(timeout)
+        if timeout == DEFAULT_TIMEOUT:
+            timeout = self.default_timeout
+        return super(PyLibMCCache, self)._get_memcache_timeout(timeout)
 
-    def add(self, key, value, timeout=None, version=None):
+    def add(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
         try:
             return self._cache.add(key, value,
@@ -121,7 +122,7 @@ class PyLibMCCache(BaseMemcachedCache):
             log.error('MemcachedError: %s' % e, exc_info=True)
             return default
 
-    def set(self, key, value, timeout=None, version=None):
+    def set(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
         try:
             return self._cache.set(key, value,
