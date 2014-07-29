@@ -261,6 +261,11 @@ class PylibmcCacheWithOptionsTests(unittest.TestCase, BaseCacheTests):
         self.cache = get_cache('django_pylibmc.memcached.PyLibMCCache',
                                OPTIONS={'tcp_nodelay': True, 'ketama': True})
 
+class PooledPylibmcCacheTests(unittest.TestCase, BaseCacheTests):
+
+    def setUp(self):
+        self.cache = get_cache('django_pylibmc.pooledmemcached.PooledPyLibMCCache')
+
 
 if __name__ == '__main__':
     runner = simple.DjangoTestSuiteRunner()
