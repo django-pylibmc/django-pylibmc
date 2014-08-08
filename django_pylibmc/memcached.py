@@ -24,6 +24,11 @@ try:
 except ImportError:
     raise InvalidCacheBackendError('Could not import pylibmc.')
 
+try:
+    from django.core.cache.backends.memcached import DEFAULT_TIMEOUT
+except ImportError:
+    DEFAULT_TIMEOUT = None
+
 
 log = logging.getLogger('django.pylibmc')
 
@@ -91,7 +96,7 @@ class PyLibMCCache(BaseMemcachedCache):
 
         return client
 
-    def _get_memcache_timeout(self, timeout):
+    def _get_memcache_timeout(self, timeout=DEFAULT_TIMEOUT):
         """
         Special case timeout=0 to allow for infinite timeouts.
         """
@@ -100,7 +105,7 @@ class PyLibMCCache(BaseMemcachedCache):
         else:
             return super(PyLibMCCache, self)._get_memcache_timeout(timeout)
 
-    def add(self, key, value, timeout=None, version=None):
+    def add(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
         try:
             return self._cache.add(key, value,
@@ -121,7 +126,7 @@ class PyLibMCCache(BaseMemcachedCache):
             log.error('MemcachedError: %s' % e, exc_info=True)
             return default
 
-    def set(self, key, value, timeout=None, version=None):
+    def set(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
         try:
             return self._cache.set(key, value,
