@@ -126,7 +126,7 @@ class PyLibMCCache(BaseMemcachedCache):
     def _serialize_value(self, value):
         if MIN_COMPRESS_LEN > 0:
             import zlib
-            return zlib.compress(cPickle.dumps(value))
+            return zlib.compress(cPickle.dumps(value), COMPRESS_LEVEL)
         else:
             return cPickle.dumps(value)
 
