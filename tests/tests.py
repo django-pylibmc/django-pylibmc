@@ -4,6 +4,11 @@ import sys
 import time
 import unittest
 
+if hasattr(unittest, 'mock'):
+    from unittest import mock
+else: 
+    import mock
+
 
 test_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(test_dir, os.path.pardir))
@@ -34,6 +39,13 @@ class BaseCacheTests(object):
         self.cache.set("key", "value")
         self.assertEqual(self.cache.get("key"), "value")
 
+    
+    def test_set_server_error(self):
+        with patch(self.cache._cache) as fakeCache:
+            fakeCache.set.side_effect = pylibmc.ServerError()
+
+            fakeCache.set('f', 33)
+    
     def test_add(self):
         # A key can be added to a cache
         self.cache.add("addkey1", "value")
@@ -264,6 +276,7 @@ class PylibmcCacheWithOptionsTests(unittest.TestCase, BaseCacheTests):
 
 if __name__ == '__main__':
     runner = simple.DjangoTestSuiteRunner()
+    old_config = [[],[]]
     try:
         old_config = runner.setup_databases()
         unittest.main()
