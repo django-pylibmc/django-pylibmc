@@ -12,6 +12,8 @@ timeout, which translates to an infinite timeout in memcached.
 """
 import logging
 import warnings
+import cPickle
+
 from threading import local
 
 from django.conf import settings
@@ -107,7 +109,7 @@ class PyLibMCCache(BaseMemcachedCache):
                                    self._get_memcache_timeout(timeout),
                                    **COMPRESS_KWARGS)
         except pylibmc.ServerError:
-            log.error('ServerError saving %s (%d bytes)' % (key, len(str(value))),
+            log.error('ServerError saving %s (%d bytes)' % (key, self._serialize_value(value)),
                       exc_info=True)
             return False
         except MemcachedError, e:
@@ -120,6 +122,13 @@ class PyLibMCCache(BaseMemcachedCache):
         except MemcachedError, e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return default
+    
+    def _serialize_value(self, value):
+        if MIN_COMPRESS_LEN > 0:
+            import zlib
+            return zlib.compress(cPickle.dumps(value))
+        else:
+            return cPickle.dumps(value)
 
     def set(self, key, value, timeout=None, version=None):
         key = self.make_key(key, version=version)
@@ -128,7 +137,7 @@ class PyLibMCCache(BaseMemcachedCache):
                                    self._get_memcache_timeout(timeout),
                                    **COMPRESS_KWARGS)
         except pylibmc.ServerError:
-            log.error('ServerError saving %s (%d bytes)' % (key, len(str(value))),
+            log.error('ServerError saving %s (%d bytes)' % (key, self._serialize_value(value)),
                       exc_info=True)
             return False
         except MemcachedError, e:
