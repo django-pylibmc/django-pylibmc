@@ -109,7 +109,7 @@ class PyLibMCCache(BaseMemcachedCache):
                                    self._get_memcache_timeout(timeout),
                                    **COMPRESS_KWARGS)
         except pylibmc.ServerError:
-            log.error('ServerError saving %s (%d bytes)' % (key, self._serialize_value(value)),
+            log.error('ServerError saving %s (%d bytes)' % (key, len(self._serialize_value(value))),
                       exc_info=True)
             return False
         except MemcachedError, e:
@@ -138,7 +138,7 @@ class PyLibMCCache(BaseMemcachedCache):
                                    self._get_memcache_timeout(timeout),
                                    **COMPRESS_KWARGS)
         except pylibmc.ServerError:
-            log.error('ServerError saving %s (%d bytes)' % (key, self._serialize_value(value)),
+            log.error('ServerError saving %s (%d bytes)' % (key, len(self._serialize_value(value))),
                       exc_info=True)
             return False
         except MemcachedError, e:
