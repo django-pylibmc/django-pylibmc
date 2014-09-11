@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import unittest
+import pylibmc
 
 if hasattr(unittest, 'mock'):
     from unittest import mock
