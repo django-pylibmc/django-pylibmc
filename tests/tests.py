@@ -178,7 +178,7 @@ class BaseCacheTests(object):
     def test_binary_string(self):
         # Binary strings should be cachable
         from zlib import compress, decompress
-        value = 'value_to_be_compressed'
+        value = b'value_to_be_compressed'
         compressed_value = compress(value)
         self.cache.set('binary1', compressed_value)
         compressed_result = self.cache.get('binary1')
