@@ -30,7 +30,7 @@ setup(
     packages=['django_pylibmc'],
     include_package_data=True,
     zip_safe=False,
-    install_requires=['pylibmc>=1.4.1', 'Django>=1.5,<1.7'],
+    install_requires=['pylibmc>=1.4.1', 'Django>=1.5,<1.8'],
     tests_require=['tox'],
     cmdclass = {'test': Tox},
     classifiers=[

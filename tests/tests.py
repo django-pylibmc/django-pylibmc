@@ -14,6 +14,13 @@ from django.core.cache import get_cache
 
 from app.models import Poll, expensive_calculation
 
+try:
+    from django import setup
+except ImportError:
+    # Django 1.6 and below does not require setup
+    setup = lambda: None
+else:
+    assert setup
 
 # functions/classes for complex data type tests
 def f():
@@ -263,6 +270,7 @@ class PylibmcCacheWithOptionsTests(unittest.TestCase, BaseCacheTests):
 
 
 if __name__ == '__main__':
+    setup()
     runner = simple.DjangoTestSuiteRunner()
     try:
         old_config = runner.setup_databases()

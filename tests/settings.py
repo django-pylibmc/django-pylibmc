@@ -29,3 +29,12 @@ PYLIBMC_MIN_COMPRESS_LEN = 150 * 1024
 PYLIBMC_COMPRESS_LEVEL = 1  # zlib.Z_BEST_SPEED
 
 SECRET_KEY = 'secret'
+
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
