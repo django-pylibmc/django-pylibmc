@@ -1,5 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import logging
 import sys
 import time
 import unittest
@@ -10,7 +12,6 @@ sys.path.append(os.path.join(test_dir, os.path.pardir))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from django.test import simple
-from django.core.cache import get_cache
 
 from app.models import Poll, expensive_calculation
 
@@ -22,17 +23,35 @@ except ImportError:
 else:
     assert setup
 
+
 # functions/classes for complex data type tests
 def f():
     return 42
+
+
 class C:
     def m(n):
         return 24
 
 
+def load_cache(name):
+    try:
+        from django.core.cache import caches
+    except ImportError:
+        # Use Django 1.6 and earlier method
+        from django.core.cache import get_cache
+        return get_cache(name)
+    else:
+        return caches[name]
+
+
 # Lifted from django/regressiontests/cache/tests.py.
-class BaseCacheTests(object):
-    # A common set of tests to apply to all cache backends
+class PylibmcCacheTests(unittest.TestCase):
+    cache_name = 'default'
+
+    def setUp(self):
+        self.cache = load_cache(self.cache_name)
+
     def tearDown(self):
         self.cache.clear()
 
@@ -251,26 +270,36 @@ class BaseCacheTests(object):
         self.assertFalse(self.cache.set('super_big_value', super_big_value))
 
 
-class PylibmcCacheTests(unittest.TestCase, BaseCacheTests):
+class PylibmcCacheWithBinaryTests(PylibmcCacheTests):
+    cache_name = 'binary'
 
-    def setUp(self):
-        self.cache = get_cache('django_pylibmc.memcached.PyLibMCCache')
 
-class PylibmcCacheWithBinaryTests(unittest.TestCase, BaseCacheTests):
-
-    def setUp(self):
-        self.cache = get_cache('django_pylibmc.memcached.PyLibMCCache',
-                               BINARY=True)
-
-class PylibmcCacheWithOptionsTests(unittest.TestCase, BaseCacheTests):
-
-    def setUp(self):
-        self.cache = get_cache('django_pylibmc.memcached.PyLibMCCache',
-                               OPTIONS={'tcp_nodelay': True, 'ketama': True})
+class PylibmcCacheWithOptionsTests(PylibmcCacheTests):
+    cache_name = 'with_options'
 
 
 if __name__ == '__main__':
+    # Initialize app in Django 1.7 and above
     setup()
+
+    # Log memcache errors to console
+    from django_pylibmc.memcached import log
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.DEBUG)
+    log.addHandler(handler)
+
+    # Test that the cache is working at all
+    from django.core.cache import cache
+    assert cache
+    test_val = 'The test passed'
+    assert cache.set('test', test_val), "Could not set cache value"
+    cache_val = cache.get('test')
+    assert cache_val == test_val, "Could not get from cache"
+
+    # Ignore memcache errors during tests
+    handler.setLevel(logging.CRITICAL)
+
+    # Run the tests
     runner = simple.DjangoTestSuiteRunner()
     try:
         old_config = runner.setup_databases()
