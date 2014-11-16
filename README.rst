@@ -2,7 +2,8 @@
 pylibmc cache backend for Django
 ================================
 
-`This project needs a maintainer. <https://github.com/django-pylibmc/django-pylibmc/issues/31>`_
+.. image:: https://travis-ci.org/jbalogh/django-pylibmc.svg
+    :target: https://travis-ci.org/jbalogh/django-pylibmc
 
 This package provides a memcached cache backend for Django using
 `pylibmc <http://github.com/lericson/pylibmc>`_.  You want to use pylibmc because
