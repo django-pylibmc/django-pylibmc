@@ -1,1 +1,4 @@
 .tox
+*.pyc
+django_pylibmc.egg-info
+pylibmc
