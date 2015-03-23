@@ -25,7 +25,7 @@ setup(
     long_description=open('README.rst').read(),
     author='Jeff Balogh',
     author_email='jbalogh@mozilla.com',
-    url='http://github.com/jbalogh/django-pylibmc',
+    url='https://github.com/django-pylibmc/django-pylibmc',
     license='BSD',
     packages=['django_pylibmc'],
     include_package_data=True,

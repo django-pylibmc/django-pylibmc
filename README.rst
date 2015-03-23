@@ -2,8 +2,8 @@
 pylibmc cache backend for Django
 ================================
 
-.. image:: https://travis-ci.org/jbalogh/django-pylibmc.svg
-    :target: https://travis-ci.org/jbalogh/django-pylibmc
+.. image:: https://travis-ci.org/django-pylibmc/django-pylibmc.svg
+    :target: https://travis-ci.org/django-pylibmc/django-pylibmc
 
 This package provides a memcached cache backend for Django using
 `pylibmc <http://github.com/lericson/pylibmc>`_.  You want to use pylibmc because
@@ -23,9 +23,9 @@ Get it from `pypi <http://pypi.python.org/pypi/django-pylibmc>`_::
 
     pip install django-pylibmc
 
-or `github <http://github.com/jbalogh/django-pylibmc>`_::
+or `github <http://github.com/django-pylibmc/django-pylibmc>`_::
 
-    pip install -e git://github.com/jbalogh/django-pylibmc.git#egg=django-pylibmc
+    pip install -e git://github.com/django-pylibmc/django-pylibmc.git#egg=django-pylibmc
 
 
 Usage
