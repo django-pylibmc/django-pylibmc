@@ -45,24 +45,27 @@ Your cache backend should look something like this::
         }
     }
 
+To use a `memcached local socket connection
+<https://code.google.com/p/memcached/wiki/NewConfiguringServer#Unix_Sockets>`_,
+set ``LOCATION`` to the path to the file, i.e. ``'/var/run/memcached/memcached.sock'``.
 
-If you want to use the memcached binary protocol, set the `BINARY` key's
-value to `True` as shown above.  `BINARY` is `False` by default.
+If you want to use the memcached binary protocol, set the ``BINARY`` key's
+value to ``True`` as shown above.  ``BINARY`` is ``False`` by default.
 
 If you want to control `pylibmc behaviors
 <http://sendapatch.se/projects/pylibmc/behaviors.html>`_, use the
-`OPTIONS`.  `OPTIONS` is an empty dict by default.
+``OPTIONS``.  ``OPTIONS`` is an empty dict by default.
 
 Pylibmc supports `compression
 <http://sendapatch.se/projects/pylibmc/misc.html#compression>`_ and the
 minimum size (in bytes) of values to compress can be set via the Django
-setting `PYLIBMC_MIN_COMPRESS_LEN`.  The default is 0, which is disabled.
+setting ``PYLIBMC_MIN_COMPRESS_LEN``.  The default is ``0``, which is disabled.
 
 Pylibmc 1.3.0 and above allows to configure compression level, which can
-be set via the Django setting `PYLIBMC_COMPRESS_LEVEL`. It accepts the
+be set via the Django setting ``PYLIBMC_COMPRESS_LEVEL``. It accepts the
 same values as the Python `zlib <https://docs.python.org/2/library/zlib.html>`_
-module. Please note that pylibmc changed the default from `1` (`Z_BEST_SPEED`)
-to `-1` (`Z_DEFAULT_COMPRESSION`) in 1.3.0.
+module. Please note that pylibmc changed the default from ``1`` (``Z_BEST_SPEED``)
+to ``-1`` (``Z_DEFAULT_COMPRESSION``) in 1.3.0.
 
 
 Configuration with Environment Variables
@@ -72,9 +75,9 @@ Optionally, the memcached connection can be configured with environment
 variables (on platforms like Heroku). To do so, declare the following
 variables:
 
-* `MEMCACHE_SERVERS`
-* `MEMCACHE_USERNAME`
-* `MEMCACHE_PASSWORD`
+* ``MEMCACHE_SERVERS``
+* ``MEMCACHE_USERNAME``
+* ``MEMCACHE_PASSWORD``
 
 
 Caveats
