@@ -12,12 +12,11 @@ it's fast.
 Requirements
 ------------
 
-django-pylibmc requires Django 1.5+.  It was written and tested on Python 2.7.
-
+django-pylibmc requires pylibmc 1.4.1 or above.  It supports Django 1.4 through
+1.8, and Python versions 2.6, 2.7, 3.3, and 3.4.
 
 Installation
 ------------
-
 
 Get it from `pypi <http://pypi.python.org/pypi/django-pylibmc>`_::
 

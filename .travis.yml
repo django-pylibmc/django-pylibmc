@@ -5,6 +5,8 @@ install: pip install tox
 script: tox
 
 env:
+  - TOXENV=py26-django14
+  - TOXENV=py27-django14
   - TOXENV=py26-django15
   - TOXENV=py27-django15
   - TOXENV=py33-django15
@@ -14,6 +16,9 @@ env:
   - TOXENV=py27-django17
   - TOXENV=py33-django17
   - TOXENV=py34-django17
+  - TOXENV=py27-django18
+  - TOXENV=py33-django18
+  - TOXENV=py34-django18
 
 # See pylibmc's .travis.yml if a lot more configuration is needed
 services:

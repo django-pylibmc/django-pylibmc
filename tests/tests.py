@@ -11,7 +11,11 @@ test_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(test_dir, os.path.pardir))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
-from django.test import simple
+try:
+    from django.test.runner import DiscoverRunner as Runner
+except ImportError:
+    # Django 1.5 and below
+    from django.test.simple import DjangoTestSuiteRunner as Runner
 
 from app.models import Poll, expensive_calculation
 
@@ -300,7 +304,7 @@ if __name__ == '__main__':
     handler.setLevel(logging.CRITICAL)
 
     # Run the tests
-    runner = simple.DjangoTestSuiteRunner()
+    runner = Runner()
     try:
         old_config = runner.setup_databases()
         unittest.main()
