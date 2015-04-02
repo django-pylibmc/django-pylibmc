@@ -9,6 +9,28 @@ This package provides a memcached cache backend for Django using
 `pylibmc <http://github.com/lericson/pylibmc>`_.  You want to use pylibmc because
 it's fast.
 
+Do you need django-pylibmc?
+---------------------------
+Django 1.3 added support for pylibmc.  To use it, set you cache backend::
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+            'LOCATION': '127.0.0.1.11211',
+        }
+    }
+
+See the
+`Django documentation <https://docs.djangoproject.com/en/1.8/topics/cache/#memcached>`_
+for details about using this cache backend.
+
+Two reasons to use django-pylibmc instead are:
+
+- You need to use the binary protocol
+- You need to use a username and password to access the memcached server (such as
+  with `Memcachier on Heroku <https://devcenter.heroku.com/articles/memcachier#django>`_).
+
+
 Requirements
 ------------
 
