@@ -102,14 +102,31 @@ variables:
 * ``MEMCACHE_PASSWORD``
 
 
-Caveats
--------
+Caching Timouts
+---------------
+When setting a cache value, memcache allows you to set an expiration for the
+value. Commonly, the value is set to a timeout in seconds. However, other
+values are allowed including Unix timestamps and 0 for "never expire". The
+highest number of seconds is 30 days - more than that, and the value is
+treated like a timestamp.
 
-This package breaks away from the current handling of ``timeout=0`` in Django.
-Django converts 0 into the default timeout, while django-pylibmc leaves it as
-0.  memcached takes 0 to mean "infinite timeout."  You can still pass ``None``
-to get the default timeout.
+Django instead tries to work with cache timeouts in seconds after the current
+time. 0 is treated as 0 seconds, meaning the item should expire immediately.
+A timeout of None signals that the item should not expire. There is some
+support for memcache-style Unix timestamps as well.
 
+In the distant past (Django 1.3?), a timeout of 0 was converted to the default
+timeout.
+
+The current django-pylibmc behaviour is to pass 0 to the backend, which should
+be interpreted as "never expire". Omiting the timeout will get the Django
+default.
+
+In the future, django-pylibmc will adopt the latest Django behaviour.
+The safest solution for your own code is to omit the timeout parameter (and
+get the default timeout), or set it to a timeout in seconds (less than 30
+days). This way, your code will work when the Django behaviour is adopted.
+Avoid using a timeout of 0, None, or a negative number.
 
 Testing
 -------

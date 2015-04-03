@@ -49,7 +49,8 @@ def load_cache(name):
         return caches[name]
 
 
-# Lifted from django/regressiontests/cache/tests.py.
+# Lifted originally from django/regressiontests/cache/tests.py.
+# In Django 1.8 (and earlier), tests are in tests/cache/tests.py.
 class PylibmcCacheTests(unittest.TestCase):
     cache_name = 'default'
 
@@ -261,6 +262,51 @@ class PylibmcCacheTests(unittest.TestCase):
         self.cache.set_many({'key3': 'sausage', 'key4': 'lobster bisque'}, 60*60*24*30 + 1)
         self.assertEqual(self.cache.get('key3'), 'sausage')
         self.assertEqual(self.cache.get('key4'), 'lobster bisque')
+
+    def test_none_timeout(self):
+        '''
+        Passing in None for the timeout results in the default timeout
+
+        In Django, it results in a value that is cached forever.  There's no
+        way to tell the difference in the context of a unit test.
+        '''
+        self.cache.set('key1', 'eggs', None)
+        self.assertEqual(self.cache.get('key1'), 'eggs')
+
+        self.cache.add('key2', 'ham', None)
+        self.assertEqual(self.cache.get('key2'), 'ham')
+        added = self.cache.add('key1', 'new eggs', None)
+        self.assertEqual(added, False)
+        self.assertEqual(self.cache.get('key1'), 'eggs')
+
+        self.cache.set_many({'key3': 'sausage', 'key4': 'lobster bisque'}, None)
+        self.assertEqual(self.cache.get('key3'), 'sausage')
+        self.assertEqual(self.cache.get('key4'), 'lobster bisque')
+
+    def test_zero_timeout(self):
+        '''
+        Passing in zero for the timeout results in a value that is cached
+        forever.
+
+        In Django, it results in a value that is not cached.
+        '''
+        self.cache.set('key1', 'eggs', 0)
+        self.assertEqual(self.cache.get('key1'), 'eggs')
+
+        self.cache.add('key2', 'ham', 0)
+        self.assertEqual(self.cache.get('key2'), 'ham')
+        added = self.cache.add('key1', 'new eggs', None)
+        self.assertEqual(added, False)
+        self.assertEqual(self.cache.get('key1'), 'eggs')
+
+        self.cache.set_many({'key3': 'sausage', 'key4': 'lobster bisque'}, None)
+        self.assertEqual(self.cache.get('key3'), 'sausage')
+        self.assertEqual(self.cache.get('key4'), 'lobster bisque')
+
+    def test_float_timeout(self):
+        # Make sure a timeout given as a float doesn't crash anything.
+        self.cache.set("key1", "spam", 100.2)
+        self.assertEqual(self.cache.get("key1"), "spam")
 
     def test_gt_1MB_value(self):
         # Test value > 1M gets compressed and stored
