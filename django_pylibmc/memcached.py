@@ -97,13 +97,22 @@ class PyLibMCCache(BaseMemcachedCache):
         return client
 
     def _get_memcache_timeout(self, timeout=DEFAULT_TIMEOUT):
+        # ._get_memcache_timeout() will be deprecated in Django 1.9
+        # It's already raising DeprecationWarnint in Django 1.8
+        # See: https://docs.djangoproject.com/en/1.8/internals/deprecation/#deprecation-removed-in-1-9
+        try:
+            return self.get_backend_timeout(timeout)
+        except AttributeError:
+            return super(PyLibMCCache, self)._get_memcache_timeout(timeout)
+
+    def get_backend_timeout(self, timeout=DEFAULT_TIMEOUT):
         """
         Special case timeout=0 to allow for infinite timeouts.
         """
         if timeout == 0:
             return timeout
-        else:
-            return super(PyLibMCCache, self)._get_memcache_timeout(timeout)
+
+        return super(PyLibMCCache, self).get_backend_timeout(timeout)
 
     def add(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
