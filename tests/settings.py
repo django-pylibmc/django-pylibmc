@@ -7,7 +7,7 @@ DATABASES = {
 }
 
 INSTALLED_APPS = (
-    'app',
+    'tests',
 )
 
 CACHES = {
@@ -44,3 +44,19 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'CRITICAL'
+        }
+    }
+}

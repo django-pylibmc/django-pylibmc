@@ -1,32 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-import logging
-import sys
 import time
-import unittest
+from django.test import TestCase
 
-
-test_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(test_dir, os.path.pardir))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-
-try:
-    from django.test.runner import DiscoverRunner as Runner
-except ImportError:
-    # Django 1.5 and below
-    from django.test.simple import DjangoTestSuiteRunner as Runner
-
-from app.models import Poll, expensive_calculation
-
-try:
-    from django import setup
-except ImportError:
-    # Django 1.6 and below does not require setup
-    setup = lambda: None
-else:
-    assert setup
-
+from .models import Poll, expensive_calculation
 
 # functions/classes for complex data type tests
 def f():
@@ -51,7 +28,7 @@ def load_cache(name):
 
 # Lifted originally from django/regressiontests/cache/tests.py.
 # In Django 1.8 (and earlier), tests are in tests/cache/tests.py.
-class PylibmcCacheTests(unittest.TestCase):
+class PylibmcCacheTests(TestCase):
     cache_name = 'default'
 
     def setUp(self):
@@ -326,33 +303,3 @@ class PylibmcCacheWithBinaryTests(PylibmcCacheTests):
 
 class PylibmcCacheWithOptionsTests(PylibmcCacheTests):
     cache_name = 'with_options'
-
-
-if __name__ == '__main__':
-    # Initialize app in Django 1.7 and above
-    setup()
-
-    # Log memcache errors to console
-    from django_pylibmc.memcached import log
-    handler = logging.StreamHandler()
-    handler.setLevel(logging.DEBUG)
-    log.addHandler(handler)
-
-    # Test that the cache is working at all
-    from django.core.cache import cache
-    assert cache
-    test_val = 'The test passed'
-    assert cache.set('test', test_val), "Could not set cache value"
-    cache_val = cache.get('test')
-    assert cache_val == test_val, "Could not get from cache"
-
-    # Ignore memcache errors during tests
-    handler.setLevel(logging.CRITICAL)
-
-    # Run the tests
-    runner = Runner()
-    try:
-        old_config = runner.setup_databases()
-        unittest.main()
-    finally:
-        runner.teardown_databases(old_config)
