@@ -11,7 +11,7 @@ it's fast.
 
 Do you need django-pylibmc?
 ---------------------------
-Django 1.3 added support for pylibmc.  To use it, set you cache backend::
+Django has direct support for pylibmc.  To use it, set you cache backend::
 
     CACHES = {
         'default': {
