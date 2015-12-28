@@ -5,16 +5,19 @@ install: pip install tox
 script: tox
 
 env:
-  - TOXENV=py26-django14
-  - TOXENV=py27-django14
-  - TOXENV=py27-django15
-  - TOXENV=py33-django15
-  - TOXENV=py27-django16
-  - TOXENV=py33-django16
-  - TOXENV=py27-django17
-  - TOXENV=py34-django17
   - TOXENV=py27-django18
   - TOXENV=py34-django18
+  - TOXENV=py27-django19
+  - TOXENV=py34-django19
+  - TOXENV=py35-django19
+  - TOXENV=py27-django-master
+  - TOXENV=py35-django-master
+
+matrix:
+    allow_failures:
+        # Django master is allowed to fail
+        - env: TOXENV=py27-django-master
+        - env: TOXENV=py35-django-master
 
 # See pylibmc's .travis.yml if a lot more configuration is needed
 services:
