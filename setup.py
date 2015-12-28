@@ -33,7 +33,7 @@ setup(
     packages=['django_pylibmc'],
     include_package_data=True,
     zip_safe=False,
-    install_requires=['pylibmc>=1.4.1', 'Django>=1.4'],
+    install_requires=['pylibmc>=1.4.1'],
     tests_require=['tox'],
     cmdclass = {'test': Tox},
     keywords = 'django cache pylibmc memcached',
@@ -48,12 +48,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.5',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ]
 )
