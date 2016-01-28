@@ -1,6 +1,9 @@
 # Config file for automatic testing at travis-ci.org
 
+sudo: required
+dist: trusty
 language: python
+python: "3.5"
 install: pip install tox
 script: tox
 

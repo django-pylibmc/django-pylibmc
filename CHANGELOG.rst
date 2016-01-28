@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Unreleased
+----------
+- **Backwards incompatible:** No longer override the native Django memcache
+  timeout behaviour. This means that using a timeout of ``0`` now results in
+  'immediately expire' rather than an infinite timeout. To maintain previous
+  behaviour use ``None`` instead, consistent with the `Django documentation
+  <https://docs.djangoproject.com/en/stable/topics/cache/#cache-arguments>`_.
+
 0.6.1 - 2015-12-28
 ------------------
 - Supports Django 1.7 through 1.9
