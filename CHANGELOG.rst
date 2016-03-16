@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next
+----
+ - Ensure compress parameters are used in `set_many`.
+
 0.6.1 - 2015-12-28
 ------------------
 - Supports Django 1.7 through 1.9
