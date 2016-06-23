@@ -103,7 +103,7 @@ class PyLibMCCache(BaseMemcachedCache):
         if timeout == 0:
             return timeout
 
-        return super().get_backend_timeout(timeout)
+        return super(PyLibMCCache, self).get_backend_timeout(timeout)
 
     def add(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
