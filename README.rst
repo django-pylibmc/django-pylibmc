@@ -34,8 +34,8 @@ Two reasons to use django-pylibmc instead are:
 Requirements
 ------------
 
-django-pylibmc requires pylibmc 1.4.1 or above.  It supports Django 1.7 through
-1.9, and Python versions 2.7, 3.4, and 3.5.
+django-pylibmc requires pylibmc 1.4.1 or above. It supports Django 1.8 through
+1.10, and Python versions 2.7, 3.4, and 3.5.
 
 Installation
 ------------
