@@ -43,6 +43,9 @@ setup(
         # I don't know what exactly this means, but why not?
         'Environment :: Web Environment :: Mozilla',
         'Framework :: Django',
+        'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
+        'Framework :: Django :: 1.10',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',

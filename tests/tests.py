@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import time
+from django.core.cache import caches
 from django.test import TestCase
 
 from .models import Poll, expensive_calculation
@@ -15,24 +16,12 @@ class C:
         return 24
 
 
-def load_cache(name):
-    try:
-        from django.core.cache import caches
-    except ImportError:
-        # Use Django 1.6 and earlier method
-        from django.core.cache import get_cache
-        return get_cache(name)
-    else:
-        return caches[name]
-
-
-# Lifted originally from django/regressiontests/cache/tests.py.
-# In Django 1.8 (and earlier), tests are in tests/cache/tests.py.
+# Lifted from tests/cache/tests.py in Django.
 class PylibmcCacheTests(TestCase):
     cache_name = 'default'
 
     def setUp(self):
-        self.cache = load_cache(self.cache_name)
+        self.cache = caches[self.cache_name]
 
     def tearDown(self):
         self.cache.clear()
