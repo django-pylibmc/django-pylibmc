@@ -289,6 +289,11 @@ class PylibmcCacheTests(TestCase):
 class PylibmcCacheWithBinaryTests(PylibmcCacheTests):
     cache_name = 'binary'
 
+class PooledPylibmcCacheTests(unittest.TestCase, BaseCacheTests):
+
+    def setUp(self):
+        self.cache = get_cache('django_pylibmc.pooledmemcached.PooledPyLibMCCache')
+
 
 class PylibmcCacheWithOptionsTests(PylibmcCacheTests):
     cache_name = 'with_options'
