@@ -157,6 +157,10 @@ class PyLibMCCache(BaseMemcachedCache):
     def set_many(self, *args, **kwargs):
         try:
             return super(PyLibMCCache, self).set_many(*args, **kwargs)
+        except pylibmc.ServerError:
+            log.error('ServerError set_many args = %s kwargs = %s' % (str(args), str(kwargs)),
+                      exc_info=True)
+            return False
         except MemcachedError as e:
             log.error('MemcachedError: %s' % e, exc_info=True)
             return False
