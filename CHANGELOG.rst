@@ -3,7 +3,7 @@ Changelog
 
 0.6.1 - 2015-12-28
 ------------------
-- Supports Django 1.7 through 1.10
+- Supports Django 1.7 through 1.11
 - Supports Python 2.7, 3.4, and 3.5
 
 0.6.0 - 2015-04-01
