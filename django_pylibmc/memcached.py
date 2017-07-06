@@ -16,18 +16,13 @@ from threading import local
 
 from django.conf import settings
 from django.core.cache.backends.base import InvalidCacheBackendError
-from django.core.cache.backends.memcached import BaseMemcachedCache
+from django.core.cache.backends.memcached import BaseMemcachedCache, DEFAULT_TIMEOUT
 
 try:
     import pylibmc
     from pylibmc import Error as MemcachedError
 except ImportError:
     raise InvalidCacheBackendError('Could not import pylibmc.')
-
-try:
-    from django.core.cache.backends.memcached import DEFAULT_TIMEOUT
-except ImportError:
-    DEFAULT_TIMEOUT = None
 
 
 log = logging.getLogger('django.pylibmc')
