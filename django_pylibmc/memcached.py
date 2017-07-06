@@ -40,20 +40,12 @@ if not COMPRESS_LEVEL == -1:
     if not pylibmc.support_compression:
         warnings.warn('A compression level was provided but pylibmc was '
                       'not compiled with support for it.')
-    if not pylibmc.__version__ >= '1.3.0':
-        warnings.warn('A compression level was provided but pylibmc 1.3.0 '
-                      'or above is required to handle this option.')
-
 
 # Keyword arguments to configure compression options
-# based on capabilities of a provided pylibmc library.
 COMPRESS_KWARGS = {
-    # Requires pylibmc 1.0 and above. Given that the minumum supported
-    # version (as of now) is 1.1, the parameter is always included.
     'min_compress_len': MIN_COMPRESS_LEN,
+    'compress_level': COMPRESS_LEVEL,
 }
-if pylibmc.__version__ >= '1.3.0':
-    COMPRESS_KWARGS['compress_level'] = COMPRESS_LEVEL
 
 
 class PyLibMCCache(BaseMemcachedCache):
