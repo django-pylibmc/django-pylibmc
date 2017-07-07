@@ -1,8 +1,6 @@
 # Config file for automatic testing at travis-ci.org
 
-# sudo: false appears to work, and makes for fast builds.
-#  memcached is started with "sudo service memcached start", which issues a
-#  warning about sudo, but also appears to start the service.
+# Use faster container-based builds
 sudo: false
 language: python
 install: pip install tox
