@@ -6,6 +6,9 @@ language: python
 install: pip install tox
 script: tox
 
+# Test two Python versions per supported Django version.
+# This balances testing all the Python and Django versions
+# while minimizing the work TravisCI does with each build.
 matrix:
     include:
         - env: TOXENV=py27-django18
@@ -14,20 +17,14 @@ matrix:
           python: "3.4"
         - env: TOXENV=py27-django19
           python: "2.7"
-        - env: TOXENV=py34-django19
-          python: "3.4"
         - env: TOXENV=py35-django19
           python: "3.5"
         - env: TOXENV=py27-django110
           python: "2.7"
-        - env: TOXENV=py34-django110
-          python: "3.4"
         - env: TOXENV=py35-django110
           python: "3.5"
         - env: TOXENV=py27-django111
           python: "2.7"
-        - env: TOXENV=py35-django111
-          python: "3.5"
         - env: TOXENV=py36-django111
           python: "3.6"
         - env: TOXENV=py35-django-master
