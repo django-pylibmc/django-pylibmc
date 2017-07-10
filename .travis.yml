@@ -1,13 +1,14 @@
 # Config file for automatic testing at travis-ci.org
 
-# sudo: false appears to work, and makes for fast builds.
-#  memcached is started with "sudo service memcached start", which issues a
-#  warning about sudo, but also appears to start the service.
+# Use faster container-based builds
 sudo: false
 language: python
 install: pip install tox
 script: tox
 
+# Test two Python versions per supported Django version.
+# This balances testing all the Python and Django versions
+# while minimizing the work TravisCI does with each build.
 matrix:
     include:
         - env: TOXENV=py27-django18
@@ -16,30 +17,24 @@ matrix:
           python: "3.4"
         - env: TOXENV=py27-django19
           python: "2.7"
-        - env: TOXENV=py34-django19
-          python: "3.4"
         - env: TOXENV=py35-django19
           python: "3.5"
         - env: TOXENV=py27-django110
           python: "2.7"
-        - env: TOXENV=py34-django110
-          python: "3.5"
         - env: TOXENV=py35-django110
           python: "3.5"
         - env: TOXENV=py27-django111
           python: "2.7"
-        - env: TOXENV=py34-django111
-          python: "3.5"
-        - env: TOXENV=py35-django111
-          python: "3.5"
-        - env: TOXENV=py27-django-master
-          python: "2.7"
+        - env: TOXENV=py36-django111
+          python: "3.6"
         - env: TOXENV=py35-django-master
           python: "3.5"
+        - env: TOXENV=py36-django-master
+          python: "3.6"
     allow_failures:
         # Django master is allowed to fail
-        - env: TOXENV=py27-django-master
         - env: TOXENV=py35-django-master
+        - env: TOXENV=py36-django-master
 
 # See pylibmc's .travis.yml if a lot more configuration is needed
 services:
