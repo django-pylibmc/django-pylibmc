@@ -9,10 +9,16 @@ import django
 from django.core import signals
 from django.core.cache import caches
 from django.db import close_old_connections
-from django.test import TestCase, mock
+from django.test import TestCase
 from django.utils import six
 
 from .models import Poll, expensive_calculation
+
+try:
+    from unittest import mock
+except ImportError:
+    # Python 2
+    import mock
 
 try:    # Use the same idiom as in cache backends
     from django.utils.six.moves import cPickle as pickle

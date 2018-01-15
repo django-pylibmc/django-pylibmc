@@ -27,6 +27,10 @@ matrix:
           python: "2.7"
         - env: TOXENV=py36-django111
           python: "3.6"
+        - env: TOXENV=py35-django20
+          python: "3.5"
+        - env: TOXENV=py36-django20
+          python: "3.6"
         - env: TOXENV=py35-django-master
           python: "3.5"
         - env: TOXENV=py36-django-master
