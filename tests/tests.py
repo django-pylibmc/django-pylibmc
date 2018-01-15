@@ -3,7 +3,9 @@
 from __future__ import unicode_literals
 
 import time
+import unittest
 
+import django
 from django.core import signals
 from django.core.cache import caches
 from django.db import close_old_connections
@@ -449,12 +451,15 @@ class PylibmcCacheTests(TestCase):
         with self.assertRaises(pickle.PickleError):
             self.cache.set('unpicklable', Unpicklable())
 
+    @unittest.skipIf(django.VERSION < (1, 11),
+        'get_or_set with `None` not supported (Django ticket #26792)')
     def test_get_or_set(self):
         self.assertIsNone(self.cache.get('projector'))
         self.assertEqual(self.cache.get_or_set('projector', 42), 42)
         self.assertEqual(self.cache.get('projector'), 42)
         self.assertEqual(self.cache.get_or_set('null', None), None)
 
+    @unittest.skipIf(django.VERSION < (1, 9), 'get_or_set not supported')
     def test_get_or_set_callable(self):
         def my_callable():
             return 'value'
@@ -462,11 +467,14 @@ class PylibmcCacheTests(TestCase):
         self.assertEqual(self.cache.get_or_set('mykey', my_callable), 'value')
         self.assertEqual(self.cache.get_or_set('mykey', my_callable()), 'value')
 
+    @unittest.skipIf(django.VERSION < (1, 9), 'get_or_set not supported')
     def test_get_or_set_callable_returning_none(self):
         self.assertIsNone(self.cache.get_or_set('mykey', lambda: None))
         # Previous get_or_set() doesn't store None in the cache.
         self.assertEqual(self.cache.get('mykey', 'default'), 'default')
 
+    @unittest.skipIf(django.VERSION < (1, 11),
+        'get_or_set with `None` not supported (Django ticket #26792)')
     def test_get_or_set_version(self):
         msg = (
             "get_or_set() missing 1 required positional argument: 'default'"
@@ -516,6 +524,8 @@ class PylibmcCacheTests(TestCase):
         value = self.cache.get('small_value')
         self.assertTrue(value is None or value == large_value)
 
+    # TODO: Fix https://github.com/django-pylibmc/django-pylibmc/issues/6
+    @unittest.expectedFailure
     def test_close(self):
         # For clients that don't manage their connections properly, the
         # connection is closed when the request is complete.
