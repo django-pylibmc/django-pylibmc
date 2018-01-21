@@ -138,3 +138,5 @@ Install `tox <http://tox.testrun.org/>`_::
 Run the tests like this::
 
     tox
+
+Tests read and write against a local ``memcached`` server on the default port 11211.
