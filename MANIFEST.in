@@ -1,4 +1,9 @@
+include CHANGELOG.rst
 include LICENSE
-include *.rst
+include Makefile
+include README.rst
+include requirements.txt
+include runtests.py
 include tox.ini
+
 recursive-include tests *.py
