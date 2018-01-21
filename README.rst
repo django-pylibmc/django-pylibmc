@@ -35,7 +35,7 @@ Requirements
 ------------
 
 django-pylibmc requires pylibmc 1.4.1 or above. It supports Django 1.8 through
-1.11, and Python versions 2.7, 3.4, 3.5, and 3.6.
+2.0, and Python versions 2.7, 3.4, 3.5, and 3.6.
 
 Installation
 ------------
@@ -138,3 +138,5 @@ Install `tox <http://tox.testrun.org/>`_::
 Run the tests like this::
 
     tox
+
+Tests read and write against a local ``memcached`` server on the default port 11211.
