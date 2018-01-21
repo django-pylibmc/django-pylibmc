@@ -11,24 +11,35 @@ it's fast.
 
 Do you need django-pylibmc?
 ---------------------------
-Django has direct support for pylibmc.  To use it, set your cache backend::
+
+Django now has a built-in pylibmc backend, and as of Django 1.11 also supports
+the ``binary``, ``username`` and ``password`` options natively. As such, in most
+cases the built-in backend should be used instead of django-pylibmc, since it
+will be more actively maintained.
+
+To use Django's own backend, configure ``CACHES`` like so::
 
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-            'LOCATION': '127.0.0.1.11211',
+            'LOCATION': '127.0.0.1:11211',
         }
     }
 
 See the
-`Django documentation <https://docs.djangoproject.com/en/1.8/topics/cache/#memcached>`_
+`Django documentation <https://docs.djangoproject.com/en/1.11/topics/cache/#memcached>`_
 for details about using this cache backend.
 
-Two reasons to use django-pylibmc instead are:
+Reasons to use django-pylibmc instead, are:
 
-- You need to use the binary protocol
-- You need to use a username and password to access the memcached server (such as
-  with `Memcachier on Heroku <https://devcenter.heroku.com/articles/memcachier#django>`_).
+- You would like to use pylibmc's compression feature
+- You would rather pylibmc connection/server exceptions be caught/logged and not raised
+  (though this may be `added upstream <https://code.djangoproject.com/ticket/28342>`_ soon).
+- You're using Django <1.11 and need to:
+
+  - use the binary protocol.
+  - use a username and password to access the memcached server (such as
+    with `Memcachier on Heroku <https://devcenter.heroku.com/articles/memcachier#django>`_).
 
 
 Requirements
