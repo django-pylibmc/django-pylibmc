@@ -13,3 +13,5 @@ Changelog
 - Supports Python 2.5 through 2.7, and Python 3.3 through 3.4
 - In Django 1.6 and higher, when the timeout is omitted, the default
   timeout is used, rather than set to "never expire".
+
+.. Omit older changes from package

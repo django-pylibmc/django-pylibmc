@@ -1,3 +1,7 @@
+"""django-pylibmc packaging."""
+from __future__ import unicode_literals
+from codecs import open
+import os
 import sys
 
 from setuptools import setup
@@ -11,6 +15,7 @@ class Tox(TestCommand):
         TestCommand.finalize_options(self)
         self.test_args = []
         self.test_suite = True
+
     def run_tests(self):
         # import here, cause outside the eggs aren't loaded
         import tox
@@ -18,14 +23,41 @@ class Tox(TestCommand):
         sys.exit(errno)
 
 
-long_description = "\n".join(
-    [open(f).read() for f in ['README.rst', 'CHANGELOG.rst']])
+def get_long_description(title):
+    """Create the long_description from other files."""
+    ROOT = os.path.abspath(os.path.dirname(__file__))
+
+    readme = open(os.path.join(ROOT, 'README.rst'), 'r', 'utf8').read()
+    body_tag = ".. Omit badges from docs"
+    readme_body_start = readme.index(body_tag)
+    assert readme_body_start
+    readme_body = readme[readme_body_start + len(body_tag):]
+
+    changelog = open(os.path.join(ROOT, 'CHANGELOG.rst'), 'r', 'utf8').read()
+    old_tag = ".. Omit older changes from package"
+    changelog_body_end = changelog.index(old_tag)
+    assert changelog_body_end
+    changelog_body = changelog[:changelog_body_end]
+
+    bars = '=' * len(title)
+    long_description = """
+%(bars)s
+%(title)s
+%(bars)s
+%(readme_body)s
+
+%(changelog_body)s
+
+_(Older changes can be found in the full documentation)._
+""" % locals()
+    return long_description
+
 
 setup(
     name='django-pylibmc',
     version=django_pylibmc.__version__,
     description='Django cache backend using pylibmc',
-    long_description=long_description,
+    long_description=get_long_description('django-pylibmc'),
     author='Jeff Balogh',
     author_email='jbalogh@mozilla.com',
     url='https://github.com/django-pylibmc/django-pylibmc',
@@ -35,8 +67,8 @@ setup(
     zip_safe=False,
     install_requires=['pylibmc>=1.4.1'],
     tests_require=['tox'],
-    cmdclass = {'test': Tox},
-    keywords = 'django cache pylibmc memcached',
+    cmdclass={'test': Tox},
+    keywords='django cache pylibmc memcached',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
