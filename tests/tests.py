@@ -530,8 +530,6 @@ class PylibmcCacheTests(TestCase):
         value = self.cache.get('small_value')
         self.assertTrue(value is None or value == large_value)
 
-    # TODO: Fix https://github.com/django-pylibmc/django-pylibmc/issues/6
-    @unittest.expectedFailure
     def test_close(self):
         # For clients that don't manage their connections properly, the
         # connection is closed when the request is complete.
