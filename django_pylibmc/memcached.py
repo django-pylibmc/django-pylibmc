@@ -154,3 +154,10 @@ class PyLibMCCache(BaseMemcachedCache):
         except MemcachedError as e:
             log.error('MemcachedError: %s', e, exc_info=True)
             return False
+
+    def close(self, **kwargs):
+        # Override BaseMemcachedCache since libmemcached manages its own connections,
+        # and calling disconnect_all() resets the failover state and causes unnecessary
+        # reconnects. Copied from Django's PyLibMCCache backend:
+        # https://github.com/django/django/blob/1.11.9/django/core/cache/backends/memcached.py#L207-L210
+        pass
