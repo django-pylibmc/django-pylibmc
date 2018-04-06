@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 import time
-import unittest
+from unittest import skipIf
 
 import django
 from django.core import signals
@@ -95,10 +95,10 @@ class PylibmcCacheTests(TestCase):
     def test_has_key(self):
         # The cache can be inspected for cache keys
         self.cache.set("hello1", "goodbye1")
-        self.assertTrue(self.cache.has_key("hello1"))
-        self.assertFalse(self.cache.has_key("goodbye1"))
+        self.assertTrue(self.cache.has_key("hello1"))  # noqa: W601
+        self.assertFalse(self.cache.has_key("goodbye1"))  # noqa: W601
         self.cache.set("no_expiry", "here", None)
-        self.assertTrue(self.cache.has_key("no_expiry"))
+        self.assertTrue(self.cache.has_key("no_expiry"))  # noqa: W601
 
     def test_in(self):
         # The in operator can be used to inspet cache contents
@@ -194,7 +194,7 @@ class PylibmcCacheTests(TestCase):
 
         self.cache.add("expire2", "newvalue")
         self.assertEqual(self.cache.get("expire2"), "newvalue")
-        self.assertFalse(self.cache.has_key("expire3"))
+        self.assertFalse(self.cache.has_key("expire3"))  # noqa: W601
 
     def test_unicode(self):
         # Unicode values can be cached
@@ -369,9 +369,9 @@ class PylibmcCacheTests(TestCase):
         self.cache.set('answer1', 42)
 
         # has_key
-        self.assertTrue(self.cache.has_key('answer1'))
-        self.assertTrue(self.cache.has_key('answer1', version=1))
-        self.assertFalse(self.cache.has_key('answer1', version=2))
+        self.assertTrue(self.cache.has_key('answer1'))  # noqa: W601
+        self.assertTrue(self.cache.has_key('answer1', version=1))  # noqa: W601
+        self.assertFalse(self.cache.has_key('answer1', version=2))  # noqa: W601
 
     def test_cache_versioning_delete(self):
         self.cache.set('answer1', 37, version=1)
@@ -457,15 +457,15 @@ class PylibmcCacheTests(TestCase):
         with self.assertRaises(pickle.PickleError):
             self.cache.set('unpicklable', Unpicklable())
 
-    @unittest.skipIf(django.VERSION < (1, 11),
-        'get_or_set with `None` not supported (Django ticket #26792)')
+    @skipIf(django.VERSION < (1, 11),
+            'get_or_set with `None` not supported (Django ticket #26792)')
     def test_get_or_set(self):
         self.assertIsNone(self.cache.get('projector'))
         self.assertEqual(self.cache.get_or_set('projector', 42), 42)
         self.assertEqual(self.cache.get('projector'), 42)
         self.assertEqual(self.cache.get_or_set('null', None), None)
 
-    @unittest.skipIf(django.VERSION < (1, 9), 'get_or_set not supported')
+    @skipIf(django.VERSION < (1, 9), 'get_or_set not supported')
     def test_get_or_set_callable(self):
         def my_callable():
             return 'value'
@@ -473,14 +473,14 @@ class PylibmcCacheTests(TestCase):
         self.assertEqual(self.cache.get_or_set('mykey', my_callable), 'value')
         self.assertEqual(self.cache.get_or_set('mykey', my_callable()), 'value')
 
-    @unittest.skipIf(django.VERSION < (1, 9), 'get_or_set not supported')
+    @skipIf(django.VERSION < (1, 9), 'get_or_set not supported')
     def test_get_or_set_callable_returning_none(self):
         self.assertIsNone(self.cache.get_or_set('mykey', lambda: None))
         # Previous get_or_set() doesn't store None in the cache.
         self.assertEqual(self.cache.get('mykey', 'default'), 'default')
 
-    @unittest.skipIf(django.VERSION < (1, 11),
-        'get_or_set with `None` not supported (Django ticket #26792)')
+    @skipIf(django.VERSION < (1, 11),
+            'get_or_set with `None` not supported (Django ticket #26792)')
     def test_get_or_set_version(self):
         msg = (
             "get_or_set() missing 1 required positional argument: 'default'"
