@@ -141,9 +141,15 @@ class PyLibMCCache(BaseMemcachedCache):
             log.error('MemcachedError: %s', e, exc_info=True)
             return {}
 
-    def set_many(self, *args, **kwargs):
+    def set_many(self, data, timeout=DEFAULT_TIMEOUT, version=None):
+        safe_data = {}
+        for key, value in data.items():
+            key = self.make_key(key, version=version)
+            safe_data[key] = value
         try:
-            return super(PyLibMCCache, self).set_many(*args, **kwargs)
+            self._cache.set_multi(safe_data,
+                                  self.get_backend_timeout(timeout),
+                                  **COMPRESS_KWARGS)
         except MemcachedError as e:
             log.error('MemcachedError: %s', e, exc_info=True)
             return False
