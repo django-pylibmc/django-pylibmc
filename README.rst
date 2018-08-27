@@ -53,7 +53,7 @@ Requirements
 ------------
 
 django-pylibmc requires pylibmc 1.4.1 or above. It supports Django 1.8 through
-2.0, and Python versions 2.7, 3.4, 3.5, and 3.6.
+2.1, and Python versions 2.7, 3.4, 3.5, and 3.6.
 
 Installation
 ------------
