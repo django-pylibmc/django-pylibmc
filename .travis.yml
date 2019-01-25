@@ -1,6 +1,7 @@
 # Config file for automatic testing at travis-ci.org
 
 # Use faster container-based builds
+dist: xenial
 sudo: false
 language: python
 install: pip install tox
@@ -29,26 +30,37 @@ matrix:
           python: "2.7"
         - env: TOXENV=py36-django111
           python: "3.6"
+        - env: TOXENV=py37-django111
+          python: "3.7"
         - env: TOXENV=py35-django20
           python: "3.5"
         - env: TOXENV=py36-django20
           python: "3.6"
+        - env: TOXENV=py37-django20
+          python: "3.7"
         - env: TOXENV=py35-django21
           python: "3.5"
+        - env: TOXENV=py37-django21
+          python: "3.7"
         - env: TOXENV=py36-django21
           python: "3.6"
         - env: TOXENV=py35-django22
           python: "3.5"
         - env: TOXENV=py36-django22
           python: "3.6"
+        - env: TOXENV=py37-django22
+          python: "3.7"
         - env: TOXENV=py35-django-master
           python: "3.5"
         - env: TOXENV=py36-django-master
           python: "3.6"
+        - env: TOXENV=py37-django-master
+          python: "3.7"
     allow_failures:
         # Django master is allowed to fail
         - env: TOXENV=py35-django-master
         - env: TOXENV=py36-django-master
+        - env: TOXENV=py37-django-master
 
 # See pylibmc's .travis.yml if a lot more configuration is needed
 services:
