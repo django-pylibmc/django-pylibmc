@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import sys
 import time
 from unittest import skipIf
 
@@ -10,7 +11,6 @@ from django.core import signals
 from django.core.cache import caches
 from django.db import close_old_connections
 from django.test import TestCase
-from django.utils import six
 
 from .models import Poll, expensive_calculation
 
@@ -24,6 +24,9 @@ try:    # Use the same idiom as in cache backends
     from django.utils.six.moves import cPickle as pickle
 except ImportError:
     import pickle
+
+
+PY3 = sys.version_info[0] == 3
 
 
 # functions/classes for complex data type tests
@@ -484,7 +487,7 @@ class PylibmcCacheTests(TestCase):
     def test_get_or_set_version(self):
         msg = (
             "get_or_set() missing 1 required positional argument: 'default'"
-            if six.PY3
+            if PY3
             else 'get_or_set() takes at least 3 arguments'
         )
         self.cache.get_or_set('brian', 1979, version=2)
