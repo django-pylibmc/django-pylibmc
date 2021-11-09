@@ -101,7 +101,7 @@ class PylibmcCacheTests(TestCase):
         self.assertTrue(self.cache.has_key("no_expiry"))  # noqa: W601
 
     def test_in(self):
-        # The in operator can be used to inspet cache contents
+        # The in operator can be used to inspect cache contents
         self.cache.set("hello2", "goodbye2")
         self.assertIn("hello2", self.cache)
         self.assertNotIn("goodbye2", self.cache)
